@@ -50,12 +50,48 @@ public:
                       cout<<endl;
                   }
              }
+			 
+			//------------------------------------------------------------------------------
+             bool checkEmpty(int x, int y)
+             {
+                  return (Grid[x][y]==EMPTY);
+             }
+
+//------------------------------------------------------------------------------			 
+             bool inboard(int x, int y)
+             {
+                  return ( x<8 && x>=0 && y<8 && y>=0);
+             }
+//------------------------------------------------------------------------------             
+             bool checkLoc(int x, int y, int dx, int dy)
+             {
+                  if(!inboard(x,y)) return false;
+                  if ( inboard(x+dx, y+dy) )
+                  {
+                       if ( Grid[x+dx][y+dy]==Grid[x][y] ) return checkLoc(x+dx, y+dy, dx, dy);
+                       
+                       else
+                       {
+                           if( Grid[x+dx][y+dy]==EMPTY ) return false;
+								else return true;
+                       }
+                  }
+                  else return false;
+             }
 
 
 };
             
 int main()
 {
+	board play;
+	bool won=false;
+    string player;
+    int row,column;
+    int turn=BLACK;
     cout<<"MAIN OTHELLO";
+	play.initialState();
+	play.printBoard();
+	system("PAUSE");
     return 0;
 }
