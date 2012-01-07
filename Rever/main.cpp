@@ -79,6 +79,46 @@ public:
                   else return false;
              }
 
+//------------------------------------------------------------------------------
+             void revert(int x, int y, int dx, int dy)
+             {
+                  if( Grid[x+dx][y+dy]!=Grid[x][y] )
+                  {
+                      Grid[x+dx][y+dy]=Grid[x][y];
+                      revert(x+dx,y+dy,dx,dy);
+                  }                  
+             }
+//------------------------------------------------------------------------------            
+             bool checkDirection (int x, int y, int colour)
+             {
+                  
+                         if (3-colour==Grid[x+1][y] && checkLoc(x+1, y,1,0)) return true;  //right
+                              
+                         if (3-colour==Grid[x+1][y+1] && checkLoc(x+1, y+1,1,1)) return true; //downright
+                         
+                         if (3-colour==Grid[x+1][y-1] && checkLoc(x+1, y-1,1,-1)) return true; // upright
+                             
+                         if (3-colour==Grid[x][y+1] && checkLoc(x, y+1,0,1)) return true; //down
+                             
+                         if (3-colour==Grid[x][y-1] && checkLoc(x, y-1,0,-1)) return true;
+                             
+                         if (3-colour==Grid[x-1][y+1] && checkLoc(x-1, y+1,-1,1)) return true;
+                             
+                         if (3-colour==Grid[x-1][y-1] && checkLoc(x-1, y-1,-1,-1)) return true;
+                             
+                         if (3-colour==Grid[x-1][y] && checkLoc(x-1, y,-1,0)) return true;
+
+				return false;
+             }
+
+//------------------------------------------------------------------------------            
+             bool checkplace(int colour, int x, int y)
+             {
+                  if ( checkEmpty( x,y)  && checkDirection( x, y, colour) )
+				  return true;
+                  else 
+                  return false;    
+             }
 
 };
             
