@@ -4,7 +4,7 @@
 
 using namespace std;
 
-enum {
+enum { // enumerator, ma typ int, stale musza byc ustawione rosnaco
 	 
 	EMPTY =0,
 	BLACK =1,
@@ -12,13 +12,14 @@ enum {
 	POSSIBLE =3
 	};
 
-class board {
+class board {	// klasa planszy i zachowania kamieni
 	
 private: 
-	int Grid[8][8];
+	int Grid[8][8]; // wielkosc planszy
 public:
 	//==============================================================================
              void initialState()
+			 //przypisuje wartosci wszystkim polom na planszy
              {
                   for (int i=0; i<8; i++)
                   {
@@ -35,6 +36,7 @@ public:
              }
 //------------------------------------------------------------------------------             
              void printBoard()
+			 // drukuje plansze z kamieniami w konsoli
              {		 
                   cout<<" |12345678\n----------\n";
                   for (int i=0; i<8; i++)
@@ -53,17 +55,22 @@ public:
 			 
 			//------------------------------------------------------------------------------
              bool checkEmpty(int x, int y)
+			 // sprawdza czy prawd¹ jest ze pole jest puste
              {
                   return (Grid[x][y]==EMPTY);
              }
 
 //------------------------------------------------------------------------------			 
              bool inboard(int x, int y)
+			 // warunek znajdowania sie w planszy
              {
                   return ( x<8 && x>=0 && y<8 && y>=0);
              }
 //------------------------------------------------------------------------------             
              bool checkLoc(int x, int y, int dx, int dy)
+			 // sprawdza czy podane wspolrzedne mieszcza sie w planszy
+			 // i czy pola o wspolrzednych zmienionych o dany kierunek 
+			 //tez mieszcza sie w planszy
              {
                   if(!inboard(x,y)) return false;
                   if ( inboard(x+dx, y+dy) )
@@ -81,8 +88,10 @@ public:
 
 //------------------------------------------------------------------------------
              void revert(int x, int y, int dx, int dy)
+			 // obracanie kamieni
              {
-                  if( Grid[x+dx][y+dy]!=Grid[x][y] )
+                  if( Grid[x+dx][y+dy]!=Grid[x][y] ) 
+				  // warunek, jezeli "kamien oddalony" jest ró¿ny od wskazanego to odwracaj
                   {
                       Grid[x+dx][y+dy]=Grid[x][y];
                       revert(x+dx,y+dy,dx,dy);
@@ -90,6 +99,8 @@ public:
              }
 //------------------------------------------------------------------------------            
              bool checkDirection (int x, int y, int colour)
+			 // kolejno sprawdza czy w danym kierunku napotyka 
+			 //wiecej niz jeden kamien przeciwnego koloru
              {
                   
                          if (3-colour==Grid[x+1][y] && checkLoc(x+1, y,1,0)) return true;  //right
@@ -112,26 +123,83 @@ public:
              }
 
 //------------------------------------------------------------------------------            
-             bool checkplace(int colour, int x, int y)
+             bool checkplace(int colour, int x, int y) 
+			 // sprawdza na tym miejscu mozna umiescic kamien
              {
                   if ( checkEmpty( x,y)  && checkDirection( x, y, colour) )
 				  return true;
                   else 
                   return false;    
              }
+//------------------------------------------------------------------------------			
+             bool canPut(int x, int y, int colour)
+             {
+                  if( checkplace( colour, x, y) )
+                  {
+                         Grid[x][y]=colour;
+                         if (3-colour==Grid[x+1][y] && checkLoc(x+1, y,1,0)) revert(x, y,1,0); // right
+                             
+                         if (3-colour==Grid[x+1][y+1] && checkLoc(x+1, y+1,1,1)) revert(x, y,1,1); // downright
+                             
+                         if (3-colour==Grid[x+1][y-1] && checkLoc(x+1, y-1,1,-1)) revert(x, y,1,-1); // upright
+                             
+                         if (3-colour==Grid[x][y+1] && checkLoc(x, y+1,0,1)) revert(x, y,0,1); //down
+                             
+                         if (3-colour==Grid[x][y-1] && checkLoc(x, y-1,0,-1)) revert(x, y,0,-1); //up
+                             
+                         if (3-colour==Grid[x-1][y+1] && checkLoc(x-1, y+1,-1,1)) revert(x, y,-1,1); //downleft
+                             
+                         if (3-colour==Grid[x-1][y-1] && checkLoc(x-1, y-1,-1,-1)) revert(x, y,-1,-1); // upleft
+                             
+                         if (3-colour==Grid[x-1][y] && checkLoc(x-1, y,-1,0)) revert(x, y,-1,0); //left
+
+						 
+                         return true;
+                  }
+                  else
+                  cout<<"Zle pole\n";
+                  return false;
+			 }
 
 };
-            
+//------------------------------------------------------------------------------			
+             
 int main()
 {
-	board play;
-	bool won=false;
+	board play;			// wywolanie do klasy board
+	bool won=false; 	// warunek dzialania programu
     string player;
     int row,column;
     int turn=BLACK;
-    cout<<"MAIN OTHELLO";
-	play.initialState();
-	play.printBoard();
+    
+	play.initialState(); // stan poczatkowy
+	play.printBoard();	//wyrysowanie planszy
+	
+	cout<<endl;
+    
+    while (! won)
+    {
+			if (turn==BLACK) player="Czarny";
+			else player="Bialy";
+
+            cout<<"Gracz: "<< player <<"\n";
+			cout<<"Wiersz: ";
+            cin>>row;
+            cout<<"Kolumna: ";
+            cin>>column;
+            cout<<endl;
+            row--;
+            column--;
+             
+			system("cls"); // czyszczenie ekranu, odswierzanie planszy
+			
+            play.printBoard(); // wyrysowuje plansze
+            cout<<endl;
+            
+            turn=3-turn; // zmiana gracza -- 3-BLACK=WHITE // 3-WHITE=BLACK
+            
+            
+    }
 	system("PAUSE");
     return 0;
 }
