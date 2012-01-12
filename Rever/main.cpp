@@ -190,7 +190,11 @@ int main()
             cout<<endl;
             row--;
             column--;
-             
+            
+			// uruchomienie cia³a programu
+			//  sprawdzenie mozliwosci umieszczenia kamienia
+			if( ! play.canPut(row,column,turn) ) turn=3-turn;
+			
 			system("cls"); // czyszczenie ekranu, odswierzanie planszy
 			
             play.printBoard(); // wyrysowuje plansze
